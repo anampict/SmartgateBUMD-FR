@@ -26,7 +26,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <DashboardLayout>
+  <DashboardLayout hideLocation>
     <div class="space-y-8">
 
       <!-- Top Section: Stat Cards Centered -->
