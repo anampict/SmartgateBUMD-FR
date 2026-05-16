@@ -9,6 +9,11 @@ const router = createRouter({
       name: 'home',
       component: DashboardPetugasView,
     },
+    {
+      path: '/operasional',
+      name: 'operasional',
+      component: () => import('../presentation/views/petugas/OperasionalPetugasView.vue'),
+    },
     // To implement later:
     // {
     //   path: '/admin',

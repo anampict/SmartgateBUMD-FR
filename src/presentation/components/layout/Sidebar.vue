@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
 import {
   LayoutDashboard,
   History,
@@ -12,13 +13,15 @@ import IconMoney from '@/presentation/components/ui/IconMoney.vue'
 import IconRouter from '@/presentation/components/ui/IconRouter.vue'
 import IconRemote from '@/presentation/components/ui/IconRemote.vue'
 
+const route = useRoute()
+
 const menuItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, active: true },
-  { name: 'Operasional', icon: IconRemote, active: false },
-  { name: 'Hardware', icon: IconRouter, active: false },
-  { name: 'Histori', icon: History, active: false },
-  { name: 'Revenue', icon: IconMoney, active: false },
-  { name: 'Members', icon: Users, active: false },
+  { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+  { name: 'Operasional', path: '/operasional', icon: IconRemote },
+  { name: 'Hardware', path: '/hardware', icon: IconRouter },
+  { name: 'Histori', path: '/histori', icon: History },
+  { name: 'Revenue', path: '/revenue', icon: IconMoney },
+  { name: 'Members', path: '/members', icon: Users },
 ]
 </script>
 
@@ -31,20 +34,20 @@ const menuItems = [
       </div>
 
       <nav class="mt-2 px-4 space-y-1">
-        <a 
+        <RouterLink 
           v-for="item in menuItems" 
           :key="item.name" 
-          href="#" 
+          :to="item.path" 
           :class="[
             'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-            item.active 
+            route.path === item.path 
               ? 'bg-blue-700 text-white shadow-sm' 
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
           ]"
         >
           <component :is="item.icon" class="w-5 h-5" />
           {{ item.name }}
-        </a>
+        </RouterLink>
       </nav>
     </div>
 
