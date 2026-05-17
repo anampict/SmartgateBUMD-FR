@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'hardware',
       component: () => import('../presentation/views/petugas/HardwarePetugasView.vue'),
     },
+    {
+      path: '/histori',
+      name: 'histori',
+      component: () => import('../presentation/views/petugas/HistoriPetugasView.vue'),
+    },
     // To implement later:
     // {
     //   path: '/admin',
