@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Ticket } from '@lucide/vue'
-import DashboardLayout from '@/presentation/layouts/DashboardLayout.vue'
+import { useRoute } from 'vue-router'
+import { Ticket, LayoutDashboard, Settings2, Router as RouterIcon, History, Banknote, Users, DoorOpen, LogOut, Radio, Wifi, Clock } from '@lucide/vue'
+import profileImg from '@/assets/gambar/profilepetugas.png'
 
-import TicketValidationCard from '@/presentation/components/operasional/TicketValidationCard.vue'
-import MismatchLogCard from '@/presentation/components/operasional/MismatchLogCard.vue'
-import GateCameraCard from '@/presentation/components/operasional/GateCameraCard.vue'
-import PaymentDetailCard from '@/presentation/components/operasional/PaymentDetailCard.vue'
-import RecentCapturesCard from '@/presentation/components/operasional/RecentCapturesCard.vue'
-import SlotInfoCard from '@/presentation/components/operasional/SlotInfoCard.vue'
+import TicketValidationCard from '@/presentation/components/petugas/TicketValidationCard.vue'
+import MismatchLogCard from '@/presentation/components/petugas/MismatchLogCard.vue'
+import GateCameraCard from '@/presentation/components/petugas/GateCameraCard.vue'
+import PaymentDetailCard from '@/presentation/components/petugas/PaymentDetailCard.vue'
+import RecentCapturesCard from '@/presentation/components/petugas/RecentCapturesCard.vue'
+import SlotInfoCard from '@/presentation/components/petugas/SlotInfoCard.vue'
 
+const route = useRoute()
 const isLostTicketRight = ref(false)
 
 const mismatchLogs = [
@@ -32,7 +34,47 @@ const gates = [
 </script>
 
 <template>
-  <DashboardLayout>
+  <div class="min-h-screen bg-[#E7EEFF] flex text-gray-900">
+    <!-- Inline Sidebar -->
+    <aside class="w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between fixed top-0 left-0 z-20">
+      <div>
+        <div class="p-6">
+          <h1 class="text-xl font-bold text-gray-900">SmartGate BUMD</h1>
+          <p class="text-xs text-gray-500 mt-1">Operator Lapangan</p>
+        </div>
+        <nav class="mt-2 px-4 space-y-1">
+          <RouterLink to="/" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><LayoutDashboard class="w-5 h-5" /> Dashboard</RouterLink>
+          <RouterLink to="/operasional" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/operasional' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><Settings2 class="w-5 h-5" /> Operasional</RouterLink>
+          <RouterLink to="/hardware" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/hardware' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><RouterIcon class="w-5 h-5" /> Hardware</RouterLink>
+          <RouterLink to="/histori" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/histori' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><History class="w-5 h-5" /> Histori</RouterLink>
+          <RouterLink to="/revenue" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/revenue' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><Banknote class="w-5 h-5" /> Revenue</RouterLink>
+          <RouterLink to="/members" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/members' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><Users class="w-5 h-5" /> Members</RouterLink>
+        </nav>
+      </div>
+      <div class="p-4 space-y-4">
+        <button class="w-full flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-blue-800 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors"><DoorOpen class="w-5 h-5" /> Buka Gate</button>
+        <button class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"><LogOut class="w-5 h-5" /> Logout</button>
+      </div>
+    </aside>
+
+    <div class="flex-1 ml-64 flex flex-col relative h-screen">
+      <!-- Inline Header -->
+      <header class="h-20 bg-white/50 backdrop-blur-sm border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <h2 class="text-2xl font-bold text-[#0f4a8a]">SmartGateBUMD</h2>
+          <span class="text-gray-400 text-sm">|</span>
+          <span class="text-gray-500 text-sm font-medium">Lantai 1 - Pos Timur</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-4 text-[#0f4a8a]"><Radio class="w-5 h-5" /><Wifi class="w-5 h-5" /><Clock class="w-5 h-5" /></div>
+          <div class="flex items-center gap-3 pl-6 border-l border-gray-200">
+            <div class="text-right"><p class="text-sm font-bold text-gray-900">Budi Santoso</p><p class="text-xs text-gray-500">Gate B-12</p></div>
+            <div class="w-10 h-10 rounded-full bg-blue-100 overflow-hidden border border-gray-200"><img :src="profileImg" alt="Profile" class="w-full h-full object-cover" /></div>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-8 overflow-auto">
     <div class="grid grid-cols-12 gap-8 min-w-[900px]">
       
       <!-- Left Column (Wide) -->
@@ -95,5 +137,7 @@ const gates = [
       </div>
       
     </div>
-  </DashboardLayout>
+        </main>
+    </div>
+  </div>
 </template>
