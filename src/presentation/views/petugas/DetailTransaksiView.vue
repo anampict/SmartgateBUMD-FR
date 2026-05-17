@@ -3,9 +3,10 @@ import {
   LayoutDashboard, History, Users, LogOut, Settings, 
   ArrowLeft, Wifi, Signal, Clock, Car, Info, 
   ArrowRight, Printer, Video, CreditCard, DoorOpen,
-  TrendingUp, Search, Bell, Radio
+  TrendingUp, Search, Bell, Radio, Receipt
 } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
 import profileImg from '@/assets/gambar/profilepetugas.png'
 
 import IconRemote from '@/presentation/components/petugas/IconRemote.vue'
@@ -13,8 +14,28 @@ import IconRouter from '@/presentation/components/petugas/IconRouter.vue'
 import IconMoney from '@/presentation/components/petugas/IconMoney.vue'
 import IconKey from '@/presentation/components/petugas/IconKey.vue'
 
+import { dummyTransactionDetail } from '@/data/sources/dummy-transaction-detail'
+
 const route = useRoute()
 const router = useRouter()
+
+const transaction = ref(dummyTransactionDetail)
+
+const formatRupiah = (value: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(value).replace('Rp', 'Rp ')
+}
+
+const getPlateNumberHtml = (plate: string) => {
+  const parts = plate.split(' ')
+  if (parts.length >= 3) {
+    return `${parts[0]} ${parts[1]}<br>${parts[2]}`
+  }
+  return plate
+}
 </script>
 
 <template>
@@ -54,7 +75,7 @@ const router = useRouter()
           <button @click="router.push('/histori')" class="text-[#0f4a8a] hover:bg-blue-50 p-2 rounded-lg transition-colors">
             <ArrowLeft class="w-6 h-6 stroke-[2.5]" />
           </button>
-          <h2 class="text-[22px] font-extrabold text-[#0f4a8a] tracking-tight">Detail Transaksi: B 2841 SKZ</h2>
+          <h2 class="text-[22px] font-extrabold text-[#0f4a8a] tracking-tight">Detail Transaksi: {{ transaction.vehicle.plateNumber }}</h2>
         </div>
 
         <div class="flex items-center gap-6">
@@ -81,31 +102,31 @@ const router = useRouter()
             <div class="col-span-8 flex flex-col gap-6">
               
               <!-- Vehicle Captured Information -->
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full">
-                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4">
-                  <h3 class="text-[11px] font-bold text-slate-600 tracking-wider uppercase">Vehicle Captured Information</h3>
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-[#eef2ff] border-b border-[#dbeafe] px-6 py-4">
+                  <h3 class="text-[11px] font-bold text-slate-700 tracking-wider uppercase">Vehicle Captured Information</h3>
                 </div>
                 <div class="p-6 flex gap-6 items-center flex-1">
                   <!-- Car Image Placeholder -->
                   <div class="w-[400px] h-[240px] rounded-lg overflow-hidden flex items-center justify-center shrink-0 border border-gray-200 relative group bg-black">
-                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Car" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" />
+                    <img :src="transaction.vehicle.imagePlaceholderUrl" alt="Car" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   
                   <!-- Plate Info -->
                   <div class="flex-1 flex flex-col justify-center pl-4">
                     <p class="text-xs font-bold text-gray-500 mb-1">Nomor Plat</p>
-                    <h2 class="text-[52px] leading-[1.1] font-extrabold text-[#0f4a8a] mb-6 tracking-tight">B 2841<br>SKZ</h2>
+                    <h2 class="text-[52px] leading-[1.1] font-extrabold text-[#0f4a8a] mb-6 tracking-tight" v-html="getPlateNumberHtml(transaction.vehicle.plateNumber)"></h2>
                     
                     <div class="flex items-center gap-10">
                       <div>
                         <p class="text-[11px] font-bold text-gray-500 mb-1.5">Jenis<br>Kendaraan</p>
                         <div class="flex items-center gap-1.5 text-blue-800 font-bold text-sm">
-                          <Car class="w-4 h-4" /> Mobil
+                          <Car class="w-4 h-4" /> {{ transaction.vehicle.type }}
                         </div>
                       </div>
                       <div>
                         <p class="text-[11px] font-bold text-gray-500 mb-1.5">Warna</p>
-                        <p class="text-sm font-bold text-gray-900 mt-1">Putih</p>
+                        <p class="text-sm font-bold text-gray-900 mt-1">{{ transaction.vehicle.color }}</p>
                       </div>
                     </div>
                   </div>
@@ -114,58 +135,67 @@ const router = useRouter()
 
               <!-- Payment Summary -->
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                  <h3 class="text-[11px] font-bold text-slate-600 tracking-wider uppercase">Payment Summary</h3>
-                  <span class="bg-[#69ebb2] text-[#064e3b] text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-md shadow-sm">Berhasil</span>
+                <div class="bg-[#eef2ff] border-b border-[#dbeafe] px-6 py-4 flex items-center justify-between">
+                  <h3 class="text-[12px] font-bold text-slate-800 tracking-wide">PAyMENT SUMMARy</h3>
+                  <span 
+                    class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-md shadow-sm"
+                    :class="{
+                      'bg-[#69ebb2] text-[#064e3b]': transaction.payment.status === 'Berhasil',
+                      'bg-red-200 text-red-900': transaction.payment.status === 'Gagal',
+                      'bg-orange-200 text-orange-900': transaction.payment.status === 'Pending',
+                    }"
+                  >{{ transaction.payment.status }}</span>
                 </div>
                 
-                <div class="p-6 grid grid-cols-2 gap-6 items-start">
+                <div class="p-6 grid grid-cols-5 gap-8 items-start">
                   <!-- Cost Details -->
-                  <div class="flex flex-col gap-4">
-                    <div class="flex justify-between items-center text-sm mb-4">
+                  <div class="col-span-3 flex flex-col mt-1">
+                    <div class="flex justify-between items-center text-[15px] pb-3">
                       <span class="text-gray-600 font-medium">Biaya Parkir</span>
-                      <span class="font-bold text-gray-900">Rp 15.000</span>
+                      <span class="font-bold text-gray-900">{{ formatRupiah(transaction.payment.biayaParkir) }}</span>
                     </div>
                     
-                    <div class="w-full h-px bg-gray-200 mb-4"></div>
+                    <div class="w-full h-px bg-gray-100 mb-3"></div>
                     
-                    <div class="flex justify-between items-center text-sm mb-4">
+                    <div class="flex justify-between items-center text-[15px] pb-3">
                       <span class="text-gray-600 font-medium">Denda / Lainnya</span>
-                      <span class="font-bold text-gray-900">Rp 0</span>
+                      <span class="font-bold text-gray-900">{{ formatRupiah(transaction.payment.dendaLainnya) }}</span>
                     </div>
                     
-                    <div class="w-full h-px bg-gray-200 mb-4"></div>
+                    <div class="w-full h-px bg-gray-100 mb-4"></div>
                     
-                    <div class="flex justify-between items-center bg-[#f0f4ff] px-5 py-3.5 rounded-lg border border-[#dbeafe]">
-                      <span class="text-[#1e3a8a] font-bold text-[14px]">Total Pembayaran</span>
-                      <span class="font-bold text-[#1e3a8a] text-[15px]">Rp 15.000</span>
+                    <div class="flex justify-between items-center bg-[#f0f4ff] px-5 py-4 rounded-lg">
+                      <span class="text-[#1e3a8a] font-bold text-[15px]">Total Pembayaran</span>
+                      <span class="font-bold text-[#1e3a8a] text-[16px]">{{ formatRupiah(transaction.payment.totalPembayaran) }}</span>
                     </div>
                   </div>
 
                   <!-- Method Details -->
-                  <div class="bg-[#f8fafc] border border-blue-100 rounded-xl p-6 shadow-sm">
+                  <div class="col-span-2 bg-[#f0f4ff] border border-[#dbeafe] rounded-xl p-5">
                     <div class="flex items-start gap-4 mb-6">
-                      <div class="w-9 h-9 rounded-full bg-blue-100/50 text-[#2563eb] flex items-center justify-center shrink-0 border border-blue-200">
-                        <CreditCard class="w-[18px] h-[18px]" />
+                      <div class="w-9 h-9 rounded-lg bg-[#dbeafe] text-[#1e3a8a] flex items-center justify-center shrink-0">
+                        <Radio class="w-[18px] h-[18px]" />
                       </div>
                       <div class="pt-0.5">
                         <p class="text-[11px] font-medium text-gray-500 mb-0.5">Metode Pembayaran</p>
-                        <p class="text-[13px] font-bold text-gray-900">Cashless - Tap (e-Money)</p>
+                        <p class="text-[13px] font-bold text-gray-900">{{ transaction.payment.metodePembayaran }}</p>
                       </div>
                     </div>
                     
                     <div class="flex items-start gap-4 mb-7">
-                      <div class="w-9 h-9 rounded-full bg-blue-100/50 text-[#2563eb] flex items-center justify-center shrink-0 border border-blue-200">
-                        <IconMoney class="w-[18px] h-[18px]" />
+                      <div class="w-9 h-9 rounded-lg bg-[#dbeafe] text-[#1e3a8a] flex items-center justify-center shrink-0">
+                        <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]">
+                          <path d="M3 20C2.16667 20 1.45833 19.7083 0.875 19.125C0.291667 18.5417 0 17.8333 0 17V14H3V0L4.5 1.5L6 0L7.5 1.5L9 0L10.5 1.5L12 0L13.5 1.5L15 0L16.5 1.5L18 0V17C18 17.8333 17.7083 18.5417 17.125 19.125C16.5417 19.7083 15.8333 20 15 20H3ZM15 18C15.2833 18 15.5208 17.9042 15.7125 17.7125C15.9042 17.5208 16 17.2833 16 17V3H5V14H14V17C14 17.2833 14.0958 17.5208 14.2875 17.7125C14.4792 17.9042 14.7167 18 15 18ZM6 7V5H12V7H6ZM6 10V8H12V10H6ZM14 7C13.7167 7 13.4792 6.90417 13.2875 6.7125C13.0958 6.52083 13 6.28333 13 6C13 5.71667 13.0958 5.47917 13.2875 5.2875C13.4792 5.09583 13.7167 5 14 5C14.2833 5 14.5208 5.09583 14.7125 5.2875C14.9042 5.47917 15 5.71667 15 6C15 6.28333 14.9042 6.52083 14.7125 6.7125C14.5208 6.90417 14.2833 7 14 7ZM14 10C13.7167 10 13.4792 9.90417 13.2875 9.7125C13.0958 9.52083 13 9.28333 13 9C13 8.71667 13.0958 8.47917 13.2875 8.2875C13.4792 8.09583 13.7167 8 14 8C14.2833 8 14.5208 8.09583 14.7125 8.2875C14.9042 8.47917 15 8.71667 15 9C15 9.28333 14.9042 9.52083 14.7125 9.7125C14.5208 9.90417 14.2833 10 14 10ZM3 18H12V16H2V17C2 17.2833 2.09583 17.5208 2.2875 17.7125C2.47917 17.9042 2.71667 18 3 18ZM2 18C2 18 2 17.9042 2 17.7125C2 17.5208 2 17.2833 2 17V16V18Z" fill="currentColor"/>
+                        </svg>
                       </div>
                       <div class="pt-0.5">
                         <p class="text-[11px] font-medium text-gray-500 mb-0.5">Ref Number</p>
-                        <p class="text-[13px] font-bold text-gray-900 font-mono tracking-tight">TXN-9921-X82-01</p>
+                        <p class="text-[13px] font-bold text-gray-900 font-mono tracking-tight">{{ transaction.payment.refNumber }}</p>
                       </div>
                     </div>
                     
-                    <button class="w-full py-2.5 border-2 border-[#2563eb] hover:bg-blue-50 text-[#2563eb] rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-colors bg-white shadow-sm">
-                      <Printer class="w-4 h-4" /> Cetak Ulang Tiket
+                    <button class="w-full py-2.5 border-[1.5px] border-[#1e3a8a] hover:bg-[#eef2ff] text-[#1e3a8a] rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-colors bg-white shadow-sm">
+                      <Printer class="w-4 h-4 stroke-[2.5]" /> Cetak Ulang Tiket
                     </button>
                   </div>
                 </div>
@@ -178,8 +208,8 @@ const router = useRouter()
               
               <!-- Parking Timeline -->
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[380px]">
-                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4">
-                  <h3 class="text-[11px] font-bold text-slate-600 tracking-wider uppercase">Parking Timeline</h3>
+                <div class="bg-[#eef2ff] border-b border-[#dbeafe] px-6 py-4">
+                  <h3 class="text-[11px] font-bold text-slate-700 tracking-wider uppercase">Parking Timeline</h3>
                 </div>
                 
                 <div class="p-8 relative flex-1 ml-6">
@@ -192,16 +222,16 @@ const router = useRouter()
                       <ArrowRight class="w-4 h-4" />
                     </div>
                     <div class="pt-0">
-                      <p class="text-[10px] font-medium text-gray-500 mb-0.5">Entry Point - Gate 1 In</p>
-                      <h4 class="text-lg font-bold text-gray-900 mb-0.5">12:10:01</h4>
-                      <p class="text-[11px] font-medium text-gray-500">14 Okt 2023</p>
+                      <p class="text-[10px] font-medium text-gray-500 mb-0.5">Entry Point - {{ transaction.timeline.entryGate }}</p>
+                      <h4 class="text-lg font-bold text-gray-900 mb-0.5">{{ transaction.timeline.entryTime }}</h4>
+                      <p class="text-[11px] font-medium text-gray-500">{{ transaction.timeline.entryDate }}</p>
                     </div>
                   </div>
                   
                   <!-- Duration Node -->
                   <div class="relative z-10 pl-14 mb-7">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-200 text-[10px] font-bold">
-                      <Clock class="w-3 h-3" /> Durasi: 02j 15m
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f0f4ff] text-[#1e3a8a] rounded-full border border-[#dbeafe] text-[10px] font-bold">
+                      <Clock class="w-3 h-3" /> Durasi: {{ transaction.timeline.duration }}
                     </div>
                   </div>
                   
@@ -211,9 +241,9 @@ const router = useRouter()
                       <LogOut class="w-4 h-4" />
                     </div>
                     <div class="pt-0">
-                      <p class="text-[10px] font-medium text-gray-500 mb-0.5">Exit Point - Gate 2 Out</p>
-                      <h4 class="text-lg font-bold text-gray-900 mb-0.5">14:25:01</h4>
-                      <p class="text-[11px] font-medium text-gray-500">14 Okt 2023</p>
+                      <p class="text-[10px] font-medium text-gray-500 mb-0.5">Exit Point - {{ transaction.timeline.exitGate }}</p>
+                      <h4 class="text-lg font-bold text-gray-900 mb-0.5">{{ transaction.timeline.exitTime }}</h4>
+                      <p class="text-[11px] font-medium text-gray-500">{{ transaction.timeline.exitDate }}</p>
                     </div>
                   </div>
                 </div>
@@ -221,51 +251,35 @@ const router = useRouter()
 
               <!-- Hardware Logs -->
               <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col flex-1">
-                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4">
-                  <h3 class="text-[11px] font-bold text-slate-600 tracking-wider uppercase">Hardware Performance Logs</h3>
+                <div class="bg-[#eef2ff] border-b border-[#dbeafe] px-6 py-4">
+                  <h3 class="text-[11px] font-bold text-slate-700 tracking-wider uppercase">Hardware Performance Logs</h3>
                 </div>
                 
                 <div class="p-5 flex flex-col gap-3">
-                  <!-- Log Item 1 -->
-                  <div class="bg-slate-50 border border-gray-200 rounded-lg p-3.5 flex items-center justify-between">
+                  <!-- Log Items dynamically rendered -->
+                  <div v-for="log in transaction.hardware.logs" :key="log.id" 
+                       class="bg-slate-50 border border-gray-200 rounded-lg p-3.5 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                      <Video class="w-5 h-5 text-gray-500" />
+                      <!-- Dynamic Icon based on type -->
+                      <component :is="log.type === 'camera' ? Video : log.type === 'rfid' ? CreditCard : DoorOpen" 
+                                class="w-5 h-5 text-gray-500" />
                       <div>
-                        <p class="text-[10px] text-gray-500 font-medium mb-0.5">Camera ID</p>
-                        <p class="text-xs font-bold text-gray-900">CAM-G2-OUT-HD</p>
+                        <p class="text-[10px] text-gray-500 font-medium mb-0.5">{{ log.label }}</p>
+                        <p class="text-xs font-bold" 
+                           :class="{'text-gray-900': log.status !== 'success' || log.type !== 'gate', 'text-green-700': log.type === 'gate' && log.status === 'success'}">
+                          {{ log.value }}
+                        </p>
                       </div>
                     </div>
-                    <div class="w-2 h-2 rounded-full bg-green-600"></div>
-                  </div>
-
-                  <!-- Log Item 2 -->
-                  <div class="bg-slate-50 border border-gray-200 rounded-lg p-3.5 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                      <CreditCard class="w-5 h-5 text-gray-500" />
-                      <div>
-                        <p class="text-[10px] text-gray-500 font-medium mb-0.5">RFID / Reader ID</p>
-                        <p class="text-xs font-bold text-gray-900">RFD-00452-AC</p>
-                      </div>
+                    <div class="w-2 h-2 rounded-full" 
+                         :class="{'bg-green-600': log.status === 'success', 'bg-red-600': log.status === 'error', 'bg-orange-500': log.status === 'warning'}">
                     </div>
-                    <div class="w-2 h-2 rounded-full bg-green-600"></div>
-                  </div>
-
-                  <!-- Log Item 3 -->
-                  <div class="bg-slate-50 border border-gray-200 rounded-lg p-3.5 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                      <DoorOpen class="w-5 h-5 text-gray-500" />
-                      <div>
-                        <p class="text-[10px] text-gray-500 font-medium mb-0.5">Gate Status</p>
-                        <p class="text-xs font-bold text-green-700">SUCCESS_OPEN</p>
-                      </div>
-                    </div>
-                    <div class="w-2 h-2 rounded-full bg-green-600"></div>
                   </div>
                   
                   <!-- Info Box -->
                   <div class="mt-4 bg-[#eff6ff] rounded-lg p-5 flex gap-3 items-start">
                     <Info class="w-5 h-5 text-[#2563eb] shrink-0 mt-0.5" />
-                    <p class="text-[11px] text-[#475569] leading-relaxed pr-2">Hardware processed the transaction in 842ms. All sensors within normal operational parameters.</p>
+                    <p class="text-[11px] text-[#475569] leading-relaxed pr-2">{{ transaction.hardware.statusMessage }}</p>
                   </div>
                 </div>
               </div>
