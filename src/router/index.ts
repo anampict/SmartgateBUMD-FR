@@ -24,12 +24,27 @@ const router = createRouter({
       name: 'histori',
       component: () => import('../presentation/views/petugas/HistoriPetugasView.vue'),
     },
+    {
+      path: '/revenue',
+      name: 'revenue',
+      component: () => import('../presentation/views/petugas/RevenuePetugasView.vue'),
+    },
+    {
+      path: '/members',
+      name: 'members',
+      component: () => import('../presentation/views/petugas/MembersPetugasView.vue'),
+    },
+    {
+      path: '/members/add',
+      name: 'members-add',
+      component: () => import('../presentation/views/petugas/MembersAddView.vue'),
+    },
+    {
+      path: '/histori/detail',
+      name: 'histori-detail',
+      component: () => import('../presentation/views/petugas/DetailTransaksiView.vue'),
+    },
     // To implement later:
-    // {
-    //   path: '/admin',
-    //   name: 'admin-dashboard',
-    //   component: () => import('../views/admin/DashboardAdminView.vue'),
-    // }
   ],
 })
 
