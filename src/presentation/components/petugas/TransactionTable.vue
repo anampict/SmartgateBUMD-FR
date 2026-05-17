@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 defineProps<{
   transactions: Array<{
     id: number
@@ -38,7 +42,7 @@ const getStatusClass = (status: string) => {
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-          <tr v-for="trx in transactions" :key="trx.id" class="hover:bg-gray-50/50 transition-colors">
+          <tr v-for="trx in transactions" :key="trx.id" class="hover:bg-gray-50/50 transition-colors cursor-pointer" @click="router.push('/histori/detail')">
             <td class="px-6 py-4 text-gray-500">{{ trx.jam }}</td>
             <td class="px-6 py-4 font-bold text-gray-900">{{ trx.platNomor }}</td>
             <td class="px-6 py-4 text-gray-600">{{ trx.jenis }}</td>

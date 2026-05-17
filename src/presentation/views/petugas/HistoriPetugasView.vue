@@ -5,7 +5,7 @@ import {
   DoorOpen, LogOut, Radio, Wifi, Clock, Search, FileText, FileSpreadsheet, Eye, 
   ChevronLeft, ChevronRight
 } from '@lucide/vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import IconRemote from '@/presentation/components/petugas/IconRemote.vue'
 import IconRouter from '@/presentation/components/petugas/IconRouter.vue'
 import IconMoney from '@/presentation/components/petugas/IconMoney.vue'
@@ -16,6 +16,7 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
 const route = useRoute()
+const router = useRouter()
 
 // Dummy Data
 const transactions = ref([
@@ -207,7 +208,7 @@ const exportToPDF = () => {
                 </tr>
               </thead>
               <tbody class="text-[13px]">
-                <tr v-for="(tx, index) in transactions" :key="index" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <tr v-for="(tx, index) in transactions" :key="index" class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer" @click="router.push('/histori/detail')">
                   <td class="py-4 px-6 text-gray-600 font-medium">{{ tx.id }}</td>
                   <td class="py-4 px-6 text-gray-600">
                     {{ tx.date }},<br><span class="text-gray-500">{{ tx.time }}</span>
