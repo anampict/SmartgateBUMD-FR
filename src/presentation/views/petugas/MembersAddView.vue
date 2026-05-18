@@ -24,7 +24,7 @@ const router = useRouter()
       <div>
         <div class="p-6">
           <h1 class="text-xl font-bold text-blue-800">SmartGateBUMD</h1>
-          <p class="text-xs text-gray-500 font-medium tracking-wide uppercase mt-1">Admin Management</p>
+          <p class="text-xs text-gray-500 font-medium tracking-wide uppercase mt-1">Operator Lapangan</p>
         </div>
         <nav class="mt-2 px-4 space-y-1">
           <RouterLink to="/" :class="['flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors', route.path === '/' ? 'bg-blue-700 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']"><LayoutDashboard class="w-5 h-5" /> Dashboard</RouterLink>

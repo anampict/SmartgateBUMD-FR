@@ -20,7 +20,7 @@ const route = useRoute()
     <aside class="w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between fixed top-0 left-0 z-20">
       <div>
         <div class="p-6">
-          <h1 class="text-xl font-bold text-gray-900">SmartGate BUMD</h1>
+          <h1 class="text-xl font-bold text-[#003C90]">SmartGate BUMD</h1>
           <p class="text-xs text-gray-500 mt-1">Operator Lapangan</p>
         </div>
         <nav class="mt-2 px-4 space-y-1">
