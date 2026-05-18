@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import IconRemote from '@/presentation/components/petugas/IconRemote.vue'
 import IconRouter from '@/presentation/components/petugas/IconRouter.vue'
 import IconMoney from '@/presentation/components/petugas/IconMoney.vue'
@@ -19,7 +19,14 @@ import type { Device } from '@/domain/entities/Device'
 import type { Gate } from '@/domain/entities/Gate'
 
 const route = useRoute()
+const router = useRouter()
 const repository = new DashboardRepositoryImpl()
+
+const handleLogout = () => {
+  localStorage.removeItem('authRole')
+  localStorage.removeItem('shift')
+  router.push('/login')
+}
 
 const transactions = ref<Transaction[]>([])
 const devices = ref<Device[]>([])
@@ -52,7 +59,7 @@ onMounted(async () => {
       </div>
       <div class="p-4 space-y-4">
         <button class="w-full flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-blue-800 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors"><IconKey class="w-5 h-5" /> Buka Gate</button>
-        <button class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"><LogOut class="w-5 h-5" /> Logout</button>
+        <button @click="handleLogout" class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"><LogOut class="w-5 h-5" /> Logout</button>
       </div>
     </aside>
 

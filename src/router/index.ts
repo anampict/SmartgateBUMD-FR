@@ -5,6 +5,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../presentation/views/auth/LoginView.vue'),
+    },
+    {
       path: '/',
       name: 'home',
       component: DashboardPetugasView,
@@ -44,8 +49,61 @@ const router = createRouter({
       name: 'histori-detail',
       component: () => import('../presentation/views/petugas/DetailTransaksiView.vue'),
     },
+    {
+      path: '/admin',
+      name: 'admin-dashboard',
+      component: () => import('../presentation/views/admin/DashboardAdminView.vue'),
+    },
+    {
+      path: '/admin/revenue',
+      name: 'admin-revenue',
+      component: () => import('../presentation/views/admin/RevenueAdminView.vue'),
+    },
+    {
+      path: '/admin/members',
+      name: 'admin-members',
+      component: () => import('../presentation/views/admin/MembersAdminView.vue'),
+    },
+    {
+      path: '/admin/members/add',
+      name: 'admin-members-add',
+      component: () => import('../presentation/views/admin/MembersAddAdminView.vue'),
+    },
+    {
+      path: '/admin/reports',
+      name: 'admin-reports',
+      component: () => import('../presentation/views/admin/ReportsAdminView.vue'),
+    },
+    {
+      path: '/admin/audit',
+      name: 'admin-audit',
+      component: () => import('../presentation/views/admin/AuditAdminView.vue'),
+    },
+    {
+      path: '/admin/audit/detail',
+      name: 'admin-audit-detail',
+      component: () => import('../presentation/views/admin/AuditDetailAdminView.vue'),
+    },
     // To implement later:
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const role = localStorage.getItem('authRole')
+  
+  if (to.name !== 'login' && !role) {
+    next({ name: 'login' })
+  } else if (to.name === 'login' && role) {
+    if (role === 'admin') {
+      next('/admin')
+    } else {
+      next('/')
+    }
+  } else if (to.path.startsWith('/admin') && role !== 'admin') {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router
